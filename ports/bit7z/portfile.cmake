@@ -4,14 +4,10 @@ vcpkg_from_github(
     OUT_SOURCE_PATH SOURCE_PATH
     REPO rikyoz/bit7z
     REF "v${VERSION}"
-    SHA512 02ee10a66598e9a2f5b47f35392dc8f3de11e01dac9d657e1321d1de97baf9832b1f1559054160d122dddd0427f54076820d7252185912c38b2f277d9c5fa1c0
+    SHA512 d240997e3b1f6eb8d0b19c89bf3b12044cbb10ba495b4ba535efc1cd04390157031a303025819b6fd9a6a51bdca7b59ad50df45055cbde9130ffd4c8279a0863
     HEAD_REF master
-    PATCHES
-      fix_install.patch
-      fix_dependency.patch
+    PATCHES fix_dependencies.patch
 )
-
-file(COPY "${CMAKE_CURRENT_LIST_DIR}/unofficial-bit7z-config.cmake.in" DESTINATION "${SOURCE_PATH}")
 
 vcpkg_check_features(
     OUT_FEATURE_OPTIONS FEATURE_OPTIONS
@@ -22,6 +18,7 @@ vcpkg_check_features(
 vcpkg_cmake_configure(
     SOURCE_PATH "${SOURCE_PATH}"
     OPTIONS
+        -DBIT7Z_USE_SYSTEM_DEPENDENCIES=ON
         -DBIT7Z_AUTO_FORMAT=ON
         -DBIT7Z_AUTO_PREFIX_LONG_PATHS=ON
         -DBIT7Z_DISABLE_ZIP_ASCII_PWD_CHECK=OFF
@@ -32,13 +29,14 @@ vcpkg_cmake_configure(
         -DBIT7Z_USE_SYSTEM_CODEPAGE=OFF
         -DBIT7Z_BUILD_TESTS=OFF
         -DBIT7Z_BUILD_DOCS=OFF
+        -DBIT7Z_WARNINGS_AS_ERRORS=OFF
         ${FEATURE_OPTIONS}
 )
 
 vcpkg_cmake_install()
 vcpkg_copy_pdbs()
 
-vcpkg_cmake_config_fixup(PACKAGE_NAME unofficial-bit7z CONFIG_PATH share/unofficial-bit7z)
+vcpkg_cmake_config_fixup(PACKAGE_NAME bit7z CONFIG_PATH lib/cmake/bit7z)
 
 vcpkg_install_copyright(FILE_LIST "${SOURCE_PATH}/LICENSE")
 

@@ -3,7 +3,7 @@ string(REGEX MATCH "^([0-9]*[.][0-9]*)" GLIBMM_MAJOR_MINOR "${VERSION}")
 vcpkg_download_distfile(GLIBMM_ARCHIVE
     URLS "https://ftp.gnome.org/pub/GNOME/sources/glibmm/${GLIBMM_MAJOR_MINOR}/glibmm-${VERSION}.tar.xz"
     FILENAME "glibmm-${VERSION}.tar.xz"
-    SHA512 5ace15c492be553e2c6abd8d0699197239261feaa2b45ff77181f59bb98b584dc822bdd46dbdee35691cc5a955a3b88e03f58532459236fd780823354c35d0a6
+    SHA512 af05171b4651e94f4ef0d8e06a27160cd1a7b0a4e596ba7b6584567564829a60031f27ab96a25ba7fefb6395026f4cb40a5eaf1c5bc2e15428c18fd4d52b9328
 )
 
 vcpkg_extract_source_archive(

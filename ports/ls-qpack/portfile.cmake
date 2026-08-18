@@ -6,16 +6,14 @@ vcpkg_from_github(
     OUT_SOURCE_PATH SOURCE_PATH
     REPO litespeedtech/ls-qpack
     REF "v${VERSION}"
-    SHA512 74d4b2ea96bf0de43009cc121c8e57caff83be53c613236b01dce4ac4c12505d0d9fec07d9152ca62166947a160de2ab3f7bf19fb203a60b44507516a927ecb8
+    SHA512 2f2596486bb505feb3899ec20a94c52c1ee4b2bcda28f506f6ba5302dd3997fd18150a78428a3fd1944a5ba5ab17cc9b0c73ede9e90d3cf9dddf7bc2ab708438
     HEAD_REF master
 )
-
-vcpkg_find_acquire_program(PKGCONFIG)
+file(REMOVE_RECURSE "${SOURCE_PATH}/deps")
 
 vcpkg_cmake_configure(
     SOURCE_PATH "${SOURCE_PATH}"
     OPTIONS
-        "-DPKG_CONFIG_EXECUTABLE=${PKGCONFIG}"
         -DLSQPACK_TESTS=OFF
         -DLSQPACK_BIN=OFF
         -DLSQPACK_XXH=OFF
@@ -31,12 +29,7 @@ file(REMOVE_RECURSE
     "${CURRENT_PACKAGES_DIR}/debug/share"
 )
 
-file(READ "${CURRENT_PACKAGES_DIR}/share/ls-qpack/ls-qpack-config.cmake" cmake_config)
-file(WRITE "${CURRENT_PACKAGES_DIR}/share/ls-qpack/ls-qpack-config.cmake"
-"include(CMakeFindDependencyMacro)
-find_dependency(PkgConfig)
-pkg_check_modules(XXH REQUIRED IMPORTED_TARGET libxxhash)
-${cmake_config}
-")
-
-vcpkg_install_copyright(FILE_LIST "${SOURCE_PATH}/LICENSE")
+vcpkg_install_copyright(FILE_LIST
+    "${SOURCE_PATH}/LICENSE"
+    "${SOURCE_PATH}/wincompat/sys/queue.h"
+)

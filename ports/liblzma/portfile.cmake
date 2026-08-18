@@ -2,7 +2,7 @@ vcpkg_from_github(
     OUT_SOURCE_PATH SOURCE_PATH
     REPO tukaani-project/xz
     REF "v${VERSION}"
-    SHA512 0f814f4282c87cb74a8383199c1e55ec1bf49519daaf07f7b376cb644770b75cc9257c809b661405fcfd6cda28c54d799c67eb9e169665c35b1b87529468085e
+    SHA512 8fb5e6a13397d259d8ff7484f9b63f8a6752ff1c63e1a4601170ad8175aadefb5126a1cae7f73370bfc6c2a0b4e1c0bad57a58fc5b781d3f7d45e5a483c091cc
     HEAD_REF master
     PATCHES
         build-tools.patch
@@ -12,6 +12,12 @@ vcpkg_check_features(OUT_FEATURE_OPTIONS FEATURE_OPTIONS
     FEATURES
         tools BUILD_TOOLS
 )
+
+if("tools" IN_LIST FEATURES)
+    set(XZ_SANDBOX "auto")
+else()
+    set(XZ_SANDBOX "no")
+endif()
 
 if(VCPKG_TARGET_ARCHITECTURE STREQUAL "wasm32")
     set(WASM_OPTIONS -DCMAKE_C_BYTE_ORDER=LITTLE_ENDIAN -DCMAKE_CXX_BYTE_ORDER=LITTLE_ENDIAN)
@@ -27,6 +33,8 @@ vcpkg_cmake_configure(
         -DCREATE_LZMA_SYMLINKS=OFF
         -DCMAKE_MSVC_DEBUG_INFORMATION_FORMAT=   # using flags from (vcpkg) toolchain
         -DENABLE_NLS=OFF # nls is not supported by this port, yet
+        -DXZ_NLS=OFF
+        -DXZ_SANDBOX:STRING=${XZ_SANDBOX}
     MAYBE_UNUSED_VARIABLES
         CMAKE_MSVC_DEBUG_INFORMATION_FORMAT
         CREATE_XZ_SYMLINKS
@@ -46,7 +54,7 @@ if(NOT VCPKG_TARGET_IS_WINDOWS)
 endif()
 set(prefix "${CURRENT_INSTALLED_DIR}")
 configure_file("${SOURCE_PATH}/src/liblzma/liblzma.pc.in" "${CURRENT_PACKAGES_DIR}/lib/pkgconfig/liblzma.pc" @ONLY)
-if (NOT VCPKG_BUILD_TYPE)
+if(NOT VCPKG_BUILD_TYPE)
   set(prefix "${CURRENT_INSTALLED_DIR}/debug")
   configure_file("${SOURCE_PATH}/src/liblzma/liblzma.pc.in" "${CURRENT_PACKAGES_DIR}/debug/lib/pkgconfig/liblzma.pc" @ONLY)
 endif()

@@ -6,7 +6,7 @@ vcpkg_from_github(
     OUT_SOURCE_PATH SOURCE_PATH
     REPO Mbed-TLS/mbedtls
     REF "v${VERSION}"
-    SHA512 e7985a4e7e07328ae55fdad5212f71ac6af903f2b670c6d4bc2a8d6a4b9b7343697a2fd350a836b9425590c838615cd5b2fa851940bd137bb759fa35cd9f0ee8
+    SHA512 d7a1e0098fed7b000ac2e4de31d43f427e8a046aeace91719f58222e1289470e15af5ed2a5390cf3693cf93a1efd79f34de9a6a960dc63cc0fd135072809e6e4
     HEAD_REF development
     PATCHES
         enable-pthread.patch

@@ -1,11 +1,16 @@
 {
   "name": "opencv4",
-  "version": "4.10.0",
-  "port-version": 1,
-  "description": "computer vision library",
-  "homepage": "https://github.com/opencv/opencv",
-  "license": "Apache-2.0",
+  "version": "4.12.0",
+  "port-version": 9,
+  "description": "Open Source Computer Vision Library",
+  "homepage": "https://opencv.org/",
+  "documentation": "https://docs.opencv.org/4.12.0/",
+  "license": null,
   "dependencies": [
+    {
+      "name": "cpu-features",
+      "platform": "android"
+    },
     {
       "name": "vcpkg-cmake",
       "host": true
@@ -21,7 +26,45 @@
     "zlib"
   ],
   "default-features": [
-    "default-features"
+    "calib3d",
+    {
+      "name": "directml",
+      "platform": "windows & !uwp & !mingw"
+    },
+    "dnn",
+    {
+      "name": "dshow",
+      "platform": "windows & !uwp"
+    },
+    "fs",
+    {
+      "name": "gapi",
+      "platform": "!uwp"
+    },
+    {
+      "name": "gtk",
+      "platform": "linux"
+    },
+    "highgui",
+    "intrinsics",
+    "jpeg",
+    {
+      "name": "msmf",
+      "platform": "windows & !uwp & !mingw"
+    },
+    "png",
+    "quirc",
+    "thread",
+    "tiff",
+    {
+      "name": "v4l",
+      "platform": "linux"
+    },
+    "webp",
+    {
+      "name": "win32ui",
+      "platform": "windows & !uwp"
+    }
   ],
   "features": {
     "ade": {
@@ -30,26 +73,30 @@
         "ade"
       ]
     },
+    "aravis": {
+      "description": "aravis",
+      "dependencies": [
+        {
+          "name": "aravis",
+          "default-features": false
+        }
+      ]
+    },
     "calib3d": {
       "description": "calib3d module"
+    },
+    "carotene": {
+      "description": "carotene module"
     },
     "contrib": {
       "description": "opencv_contrib module",
       "dependencies": [
-        {
-          "name": "hdf5",
-          "platform": "!uwp & !(windows & (arm | arm64)) & !ios"
-        },
         {
           "name": "opencv4",
           "default-features": false,
           "features": [
             "calib3d"
           ]
-        },
-        {
-          "name": "tesseract",
-          "platform": "!uwp & !(windows & (arm | arm64)) & !ios"
         }
       ]
     },
@@ -85,69 +132,26 @@
         "libdc1394"
       ]
     },
-    "default-features": {
-      "description": "Platform-dependent default features",
-      "dependencies": [
-        {
-          "name": "opencv4",
-          "default-features": false,
-          "features": [
-            "calib3d",
-            "fs",
-            "highgui",
-            "intrinsics",
-            "jpeg",
-            "png",
-            "quirc",
-            "thread",
-            "tiff",
-            "webp"
-          ]
-        },
-        {
-          "name": "opencv4",
-          "default-features": false,
-          "features": [
-            "gtk"
-          ],
-          "platform": "linux"
-        },
-        {
-          "name": "opencv4",
-          "default-features": false,
-          "features": [
-            "gapi"
-          ],
-          "platform": "!uwp"
-        },
-        {
-          "name": "opencv4",
-          "default-features": false,
-          "features": [
-            "dnn"
-          ],
-          "platform": "!android"
-        },
-        {
-          "name": "opencv4",
-          "default-features": false,
-          "features": [
-            "dshow",
-            "win32ui"
-          ],
-          "platform": "windows & !uwp"
-        }
-      ]
+    "directml": {
+      "description": "Build with DirectML support",
+      "supports": "windows & !uwp & !mingw"
     },
     "dnn": {
       "description": "Enable dnn module",
-      "supports": "!android",
       "dependencies": [
         "flatbuffers",
         {
           "name": "flatbuffers",
           "host": true,
           "default-features": false
+        },
+        {
+          "name": "opencv4",
+          "default-features": false,
+          "features": [
+            "intrinsics"
+          ],
+          "platform": "arm64"
         },
         "protobuf"
       ]
@@ -166,7 +170,8 @@
       ]
     },
     "dshow": {
-      "description": "Enable DirectShow"
+      "description": "Enable DirectShow",
+      "supports": "windows & !uwp"
     },
     "eigen": {
       "description": "Eigen support for opencv",
@@ -253,6 +258,19 @@
         }
       ]
     },
+    "hdf": {
+      "description": "Enable Hierarchical Data Format (hdf) I/O",
+      "dependencies": [
+        "hdf5",
+        {
+          "name": "opencv4",
+          "default-features": false,
+          "features": [
+            "contrib"
+          ]
+        }
+      ]
+    },
     "highgui": {
       "description": "highgui module"
     },
@@ -263,23 +281,16 @@
       "description": "Enable Intel Integrated Performance Primitives",
       "supports": "(osx & x64) | (windows & (x64 | x86)) | (linux & (x64 | x86))"
     },
-    "jasper": {
-      "description": "JPEG 2000 support for opencv (deprecated)",
-      "dependencies": [
-        "jasper"
-      ]
-    },
     "jpeg": {
       "description": "JPEG support for opencv",
       "dependencies": [
         "libjpeg-turbo"
       ]
     },
-    "lapack": {
-      "description": "LAPACK support for opencv",
+    "jpegxl": {
+      "description": "JPEGXL support for opencv",
       "dependencies": [
-        "blas",
-        "lapack"
+        "libjxl"
       ]
     },
     "msmf": {
@@ -303,6 +314,7 @@
     },
     "opengl": {
       "description": "opengl support for opencv",
+      "supports": "!osx",
       "dependencies": [
         "opengl"
       ]
@@ -455,6 +467,19 @@
         "tbb"
       ]
     },
+    "text": {
+      "description": "Enable Scene Text Detection and Recognition",
+      "dependencies": [
+        {
+          "name": "opencv4",
+          "default-features": false,
+          "features": [
+            "contrib"
+          ]
+        },
+        "tesseract"
+      ]
+    },
     "thread": {
       "description": "Enable thread support"
     },
@@ -466,6 +491,10 @@
           "default-features": false
         }
       ]
+    },
+    "v4l": {
+      "description": "Video4Linux support for opencv",
+      "supports": "linux"
     },
     "vtk": {
       "description": "vtk support for opencv",
@@ -491,7 +520,8 @@
           "features": [
             "dnn"
           ]
-        }
+        },
+        "vulkan-headers"
       ]
     },
     "webp": {

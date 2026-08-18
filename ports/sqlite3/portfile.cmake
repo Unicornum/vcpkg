@@ -2,9 +2,9 @@ string(REGEX REPLACE "^([0-9]+)[.]([0-9]+)[.]([0-9]+)[.]([0-9]+)" "\\1,0\\2,0\\3
 string(REGEX REPLACE "^([0-9]+),0*([0-9][0-9]),0*([0-9][0-9]),0*([0-9][0-9])," "\\1\\2\\3\\4" SQLITE_VERSION "${SQLITE_VERSION}")
 
 vcpkg_download_distfile(ARCHIVE
-    URLS "https://sqlite.org/2024/sqlite-autoconf-${SQLITE_VERSION}.tar.gz"
-    FILENAME "sqlite-autoconf-${SQLITE_VERSION}.zip"
-    SHA512 9f311e7834330d112a633a9ae7c211c602b36b6c44f94a7ff7463217da8f09ba2c469d1f2ca38da5ba88358c40e328a8958c1e4ad466b016f3bd2799ef2431e2
+    URLS "https://sqlite.org/2026/sqlite-autoconf-${SQLITE_VERSION}.tar.gz"
+    FILENAME "sqlite-autoconf-${SQLITE_VERSION}.tar.gz"
+    SHA512 c24374e9393a943157f533f96e89e6c5743e5f5aad169d8393cff3088ca5ccbe5cc0561681ace49c349d0fe402298ee2624d319f422967247ce0792e3b3aa01e
 )
 
 vcpkg_extract_source_archive(
@@ -50,6 +50,7 @@ vcpkg_check_features(OUT_FEATURE_OPTIONS none # only using the script-mode side-
         omit-load-extension SQLITE_OMIT_LOAD_EXTENSION
         geopoly             SQLITE_ENABLE_GEOPOLY
         soundex             SQLITE_SOUNDEX
+        percentile          SQLITE_ENABLE_PERCENTILE
     INVERTED_FEATURES
         json1               SQLITE_OMIT_JSON
 )
@@ -93,6 +94,9 @@ configure_file(
     "${CURRENT_PACKAGES_DIR}/share/unofficial-${PORT}/unofficial-sqlite3-config.cmake"
     @ONLY
 )
+if(VCPKG_LIBRARY_LINKAGE STREQUAL "static")
+    configure_file("${CURRENT_PORT_DIR}/vcpkg-cmake-wrapper.cmake" "${CURRENT_PACKAGES_DIR}/share/${PORT}/vcpkg-cmake-wrapper.cmake" @ONLY)
+endif()
 
 vcpkg_fixup_pkgconfig()
 vcpkg_copy_pdbs()

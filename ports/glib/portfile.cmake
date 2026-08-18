@@ -1,8 +1,16 @@
-string(REGEX MATCH "^([0-9]*[.][0-9]*)" GLIB_MAJOR_MINOR "${VERSION}")
+string(REGEX MATCH "^([0-9]*[.][0-9]*)" VERSION_MAJOR_MINOR "${VERSION}")
+# https://github.com/GNOME/glib/blob/main/SECURITY.md#supported-versions
+if(NOT VERSION_MAJOR_MINOR MATCHES "[02468]\$")
+    message("${Z_VCPKG_BACKCOMPAT_MESSAGE_LEVEL}" "glib ${VERSION_MAJOR_MINOR} is a not a \"stable release series\".")
+endif()
+# vcpkg_from_* is not used because the project uses submodules and Anubis deployed to GNOME's gitlab
+# causes vcpkg_from_gitlab to fail for several users
 vcpkg_download_distfile(GLIB_ARCHIVE
-    URLS "https://download.gnome.org/sources/glib/${GLIB_MAJOR_MINOR}/glib-${VERSION}.tar.xz"
-    FILENAME "glib-${VERSION}.tar.xz"
-    SHA512 1514d62aeb4c4a1a1048ae0f84f7db7f0dbf355772b2dadf6a34ec547045b163a5e28331b096e7616fe3c9c19bed98025a0202b05073f5d7ee901d0efaffe143
+    URLS
+        "https://download.gnome.org/sources/${PORT}/${VERSION_MAJOR_MINOR}/${PORT}-${VERSION}.tar.xz"
+        "https://www.mirrorservice.org/sites/ftp.gnome.org/pub/GNOME/sources/${PORT}/${VERSION_MAJOR_MINOR}/${PORT}-${VERSION}.tar.xz"
+    FILENAME "${PORT}-${VERSION}.tar.xz"
+    SHA512 9e2b4985d5e4e06c6897a33cf8c100b9303528ebd72152c10e4cb734fa62fc011c84b816b20f686a3b2aac9a4a5a46f33e7517b4c4c7f3c25c75ac3ddc11f844
 )
 
 vcpkg_extract_source_archive(SOURCE_PATH
@@ -10,7 +18,6 @@ vcpkg_extract_source_archive(SOURCE_PATH
     PATCHES
         use-libiconv-on-windows.patch
         libintl.patch
-        0005-pr-4133-4143-avoid-package-packaging.patch # Backport from 2.81.1
 )
 
 set(LANGUAGES C CXX)
@@ -19,7 +26,7 @@ if(VCPKG_TARGET_IS_OSX OR VCPKG_TARGET_IS_IOS)
 endif()
 
 vcpkg_list(SET OPTIONS)
-if (selinux IN_LIST FEATURES)
+if ("selinux" IN_LIST FEATURES)
     if(NOT EXISTS "/usr/include/selinux")
         message(WARNING "SELinux was not found in its typical system location. Your build may fail. You can install SELinux with \"apt-get install selinux libselinux1-dev\".")
     endif()
@@ -28,7 +35,7 @@ else()
     list(APPEND OPTIONS -Dselinux=disabled)
 endif()
 
-if (libmount IN_LIST FEATURES)
+if ("libmount" IN_LIST FEATURES)
     list(APPEND OPTIONS -Dlibmount=enabled)
 else()
     list(APPEND OPTIONS -Dlibmount=disabled)
@@ -49,10 +56,12 @@ vcpkg_configure_meson(
     OPTIONS
         ${OPTIONS}
         -Ddocumentation=false
+        -Ddtrace=disabled
         -Dinstalled_tests=false
         -Dintrospection=disabled
         -Dlibelf=disabled
         -Dman-pages=disabled
+        -Dsysprof=disabled
         -Dtests=false
         -Dxattr=false
 )
@@ -151,4 +160,9 @@ file(REMOVE_RECURSE
     "${CURRENT_PACKAGES_DIR}/lib/gio"
 )
 
-vcpkg_install_copyright(FILE_LIST "${SOURCE_PATH}/LICENSES/LGPL-2.1-or-later.txt")
+vcpkg_install_copyright(
+    FILE_LIST
+        "${SOURCE_PATH}/LICENSES/LGPL-2.1-or-later.txt"
+        "${SOURCE_PATH}/LICENSES/LGPL-2.1-only.txt"
+        "${SOURCE_PATH}/LICENSES/MPL-1.1.txt"
+)

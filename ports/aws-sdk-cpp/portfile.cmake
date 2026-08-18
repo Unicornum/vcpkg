@@ -4,12 +4,13 @@ vcpkg_from_github(
     OUT_SOURCE_PATH SOURCE_PATH
     REPO aws/aws-sdk-cpp
     REF "${VERSION}"
-    SHA512 b9695a664db722d7426f0ad9375cbac023d577e199d52ca09dcd12d95fa70dd3a2988655b22cc3a8c78317a8e08edcab7301fd711a685d6c5ba584c57b54722d
+    SHA512 7da279a42a96f1c777a2e1bf7d6d883f3e42a1214647ec71cdb1ca037bfab83ad61111f7003ba84194d8ac9485365f18614bab7761fc4e3845987da280d6dad9
     PATCHES
         fix-aws-root.patch
         lock-curl-http-and-tls-settings.patch
         fix_find_curl.patch
         find-dependency.patch
+        configure-binary-dir.patch # https://github.com/aws/aws-sdk-cpp/pull/3459
 )
 
 string(COMPARE EQUAL "${VCPKG_CRT_LINKAGE}" "dynamic" FORCE_SHARED_CRT)
@@ -33,7 +34,6 @@ endif()
 string(REPLACE "awsmigrationhub" "AWSMigrationHub" targets "${FEATURES}")
 vcpkg_cmake_configure(
     SOURCE_PATH "${SOURCE_PATH}"
-    DISABLE_PARALLEL_CONFIGURE
     OPTIONS
         ${EXTRA_ARGS}
         "-DENABLE_UNITY_BUILD=ON"
@@ -99,4 +99,9 @@ endif()
 
 configure_file("${CURRENT_PORT_DIR}/usage" "${CURRENT_PACKAGES_DIR}/share/${PORT}/usage" @ONLY)
 
-vcpkg_install_copyright(FILE_LIST "${SOURCE_PATH}/LICENSE")
+vcpkg_install_copyright(
+    FILE_LIST
+        "${SOURCE_PATH}/LICENSE"
+        "${SOURCE_PATH}/src/aws-cpp-sdk-core/include/aws/core/external/cjson/cJSON.h"
+        "${SOURCE_PATH}/src/aws-cpp-sdk-core/include/aws/core/external/tinyxml2/tinyxml2.h"
+)

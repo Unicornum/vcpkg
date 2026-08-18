@@ -4,12 +4,12 @@ vcpkg_from_github(
     OUT_SOURCE_PATH SOURCE_PATH
     REPO Tradias/asio-grpc
     REF "v${VERSION}"
-    SHA512 5793f6eb644f6fa4cf520f595f9a61b0b2a90c79cb0890dfb5b986a1b403f853beac9a86ea5663d34d5947908e5eec0ec4238c358b21d3f8f4292f7ad6df19aa
+    SHA512 4126a8b5efc1d4b24ef3c87aa82e9df35e6ce7735ed516fbfe5370c852aac29692c80d4ecc72447d3268f5502e99f72144b6f76419061cb157b9ffe36a9402ec
     HEAD_REF master
 )
 
 vcpkg_cmake_configure(
-    SOURCE_PATH ${SOURCE_PATH}
+    SOURCE_PATH "${SOURCE_PATH}"
     OPTIONS
         -DASIO_GRPC_CMAKE_CONFIG_INSTALL_DIR=share/asio-grpc
 )

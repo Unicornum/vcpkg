@@ -2,7 +2,7 @@ vcpkg_from_github(
     OUT_SOURCE_PATH SOURCE_PATH
     REPO mongodb/mongo-c-driver
     REF "${VERSION}"
-    SHA512 354f39d4bc8ce0aa5799613b2b087167546819400f0687554f0a87b9b2cba86d7b8bdc45892f3142d3097f3c1c5d5af31bfa0b125333ab5593e66a9c565f77e3
+    SHA512 5c70bd494118800a077e67da9c79f897c46a815760a2b504d9d4d0be64854b99a7af10ca2c243c3af7c5661926590e49b3aa7c7e4758dbf223aca380b1be9234
     HEAD_REF master
     PATCHES
         fix-include-directory.patch # vcpkg legacy decision
@@ -25,7 +25,6 @@ vcpkg_cmake_configure(
         "-DBUILD_VERSION=${VERSION}"
         -DENABLE_BSON=ON
         -DENABLE_EXAMPLES=OFF
-        -DENABLE_ICU=OFF
         -DENABLE_MONGOC=OFF
         -DENABLE_SASL=OFF
         -DENABLE_SNAPPY=OFF
@@ -34,27 +33,20 @@ vcpkg_cmake_configure(
         -DENABLE_STATIC=${ENABLE_STATIC}
         -DENABLE_SHARED=${ENABLE_SHARED}
         -DENABLE_TESTS=OFF
+        -DBUILD_TESTING=OFF
         -DENABLE_UNINSTALL=OFF
         -DENABLE_ZLIB=SYSTEM
         -DENABLE_ZSTD=OFF
-        -DCMAKE_DISABLE_FIND_PACKAGE_Python=ON
-        -DCMAKE_DISABLE_FIND_PACKAGE_Python3=ON
-    MAYBE_UNUSED_VARIABLES
-        ENABLE_ICU
 )
+
 vcpkg_cmake_install()
 vcpkg_copy_pdbs()
 vcpkg_fixup_pkgconfig()
 
-vcpkg_cmake_config_fixup(PACKAGE_NAME bson-1.0 CONFIG_PATH "lib/cmake/bson-1.0" DO_NOT_DELETE_PARENT_CONFIG_PATH)
+vcpkg_cmake_config_fixup(PACKAGE_NAME "bson-${VERSION}" CONFIG_PATH "lib/cmake/bson-${VERSION}")
 if(VCPKG_LIBRARY_LINKAGE STREQUAL "static")
-    vcpkg_replace_string("${CURRENT_PACKAGES_DIR}/include/bson/bson-macros.h"
+    vcpkg_replace_string("${CURRENT_PACKAGES_DIR}/include/bson/macros.h"
         "#define BSON_MACROS_H" "#define BSON_MACROS_H\n#ifndef BSON_STATIC\n#define BSON_STATIC\n#endif")
-    vcpkg_cmake_config_fixup(PACKAGE_NAME libbson-static-1.0 CONFIG_PATH "lib/cmake/libbson-static-1.0")
-    file(MAKE_DIRECTORY "${CURRENT_PACKAGES_DIR}/share/libbson-1.0")
-    file(INSTALL "${CMAKE_CURRENT_LIST_DIR}/libbson-1.0-config.cmake" DESTINATION "${CURRENT_PACKAGES_DIR}/share/libbson-1.0")
-else()
-    vcpkg_cmake_config_fixup(PACKAGE_NAME libbson-1.0 CONFIG_PATH "lib/cmake/libbson-1.0")
 endif()
 
 file(REMOVE_RECURSE

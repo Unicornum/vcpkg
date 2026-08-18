@@ -1,16 +1,22 @@
 vcpkg_from_git(
     OUT_SOURCE_PATH SOURCE_PATH
     URL "https://aomedia.googlesource.com/aom"
-    REF 8ad484f8a18ed1853c094e7d3a4e023b2a92df28 # v3.9.1
+    REF 03087864cf4bea6abb0d28f95cf7843511413d8f
+    FETCH_REF "v${VERSION}"
     HEAD_REF main
     PATCHES
         aom-rename-static.diff
         aom-uninitialized-pointer.diff
-        export-config.diff
 )
 
-vcpkg_find_acquire_program(NASM)
 vcpkg_find_acquire_program(PERL)
+
+if(VCPKG_TARGET_ARCHITECTURE MATCHES "^(x86|x64)$")
+    # Upstream AOM only uses NASM on x86-family targets. Non-x86 targets such as
+    # Apple Silicon configure with ENABLE_NASM=OFF and should not require nasm.
+    vcpkg_find_acquire_program(NASM)
+    set(aom_nasm_compiler "-DCMAKE_ASM_NASM_COMPILER=${NASM}")
+endif()
 
 set(aom_target_cpu "")
 if(VCPKG_TARGET_IS_UWP OR (VCPKG_TARGET_IS_WINDOWS AND VCPKG_TARGET_ARCHITECTURE MATCHES "^arm"))
@@ -32,26 +38,25 @@ vcpkg_cmake_configure(
         -DENABLE_TESTDATA=OFF
         -DENABLE_TESTS=OFF
         -DENABLE_TOOLS=OFF
-        -DTHREADS_PREFER_PTHREAD_FLAGS=ON
-        "-DCMAKE_ASM_NASM_COMPILER=${NASM}"
+        -DTHREADS_PREFER_PTHREAD_FLAG=ON
+        ${aom_nasm_compiler}
         "-DPERL_EXECUTABLE=${PERL}"
 )
 
 vcpkg_cmake_install()
-vcpkg_cmake_config_fixup()
+vcpkg_cmake_config_fixup(CONFIG_PATH lib/cmake/AOM)
 vcpkg_copy_pdbs()
 vcpkg_fixup_pkgconfig()
-
-if(VCPKG_TARGET_IS_WINDOWS AND NOT VPCKG_TARGET_IS_MINGW)
-    vcpkg_replace_string("${CURRENT_PACKAGES_DIR}/lib/pkgconfig/aom.pc" " -lm" "")
-    if(NOT VCPKG_BUILD_TYPE)
-        vcpkg_replace_string("${CURRENT_PACKAGES_DIR}/debug/lib/pkgconfig/aom.pc" " -lm" "")
-    endif()
-endif()
 
 file(REMOVE_RECURSE
     "${CURRENT_PACKAGES_DIR}/debug/include"
     "${CURRENT_PACKAGES_DIR}/debug/share"
 )
 
-vcpkg_install_copyright(FILE_LIST "${SOURCE_PATH}/LICENSE")
+vcpkg_install_copyright(FILE_LIST
+    "${SOURCE_PATH}/LICENSE"
+    "${SOURCE_PATH}/PATENTS"
+    "${SOURCE_PATH}/third_party/fastfeat/LICENSE"
+    "${SOURCE_PATH}/third_party/vector/LICENSE"
+    "${SOURCE_PATH}/third_party/x86inc/LICENSE"
+)

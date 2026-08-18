@@ -1,7 +1,7 @@
 {
   "name": "itk",
-  "version": "5.4.0",
-  "port-version": 1,
+  "version": "5.4.4",
+  "port-version": 2,
   "description": "Insight Segmentation and Registration Toolkit (ITK) is used for image processing and analysis.",
   "homepage": "https://github.com/InsightSoftwareConsortium/ITK",
   "license": "Apache-2.0",
@@ -14,7 +14,8 @@
       "name": "hdf5",
       "default-features": false,
       "features": [
-        "cpp"
+        "cpp",
+        "hl"
       ]
     },
     "libjpeg-turbo",
@@ -79,13 +80,7 @@
     "opencv": {
       "description": "Build ITKVideoBridgeOpenCV module.",
       "dependencies": [
-        {
-          "name": "opencv",
-          "default-features": false,
-          "features": [
-            "default-features"
-          ]
-        }
+        "opencv"
       ]
     },
     "python": {

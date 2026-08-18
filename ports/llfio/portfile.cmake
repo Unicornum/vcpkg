@@ -4,12 +4,11 @@ if ("polyfill-cxx20" IN_LIST FEATURES)
     ]=])
 endif()
 
-
 vcpkg_from_github(
     OUT_SOURCE_PATH SOURCE_PATH
     REPO ned14/llfio
-    REF 2af67dad6d87ec37a4dd042c48f5d0edcdeff326
-    SHA512 207cf7b113aa7703a9197254a01bde794a1ec5ab8ab94e690913344b29bb2579e942f12260ce6c208fb919e11731f57d2e5c80ca85ccf1d98f6747a1681be7a9
+    REF 20260506
+    SHA512 d565298a7709a34482977406a7290cf109d44a428eb96c1ab788ceb8529ee4aa5736a8db9f51b0aeedb90c54bea00615038d24d0b26336aa6959fc11b8835ff6
     HEAD_REF develop
 )
 
@@ -21,6 +20,14 @@ vcpkg_from_github(
     HEAD_REF master
 )
 
+vcpkg_from_github(
+    OUT_SOURCE_PATH WG14_SIGNALS_SOURCE_PATH
+    REPO ned14/wg14_signals
+    REF 36d3cdb66993078c8fecba93e2a5f2c549572d64
+    SHA512 096d8a539fc09635ca4ea11907244eef06d856719dd5fb4a1f07264c1b1896e6bfe6754af164435adbb57462c03779b90fdb12e284c9855a1d22274d53345fee
+    HEAD_REF main
+)
+
 vcpkg_check_features(
     OUT_FEATURE_OPTIONS LLFIO_FEATURE_OPTIONS
     FEATURES
@@ -30,6 +37,8 @@ vcpkg_check_features(
 # LLFIO expects ntkernel-error-category to live inside its include directory
 file(REMOVE_RECURSE "${SOURCE_PATH}/include/llfio/ntkernel-error-category")
 file(RENAME "${NTKEC_SOURCE_PATH}" "${SOURCE_PATH}/include/llfio/ntkernel-error-category")
+file(REMOVE_RECURSE "${SOURCE_PATH}/include/llfio/wg14_signals")
+file(RENAME "${WG14_SIGNALS_SOURCE_PATH}" "${SOURCE_PATH}/include/llfio/wg14_signals")
 
 set(extra_config)
 # cmake does not correctly set CMAKE_SYSTEM_PROCESSOR when targeting ARM on Windows
@@ -38,10 +47,12 @@ if(VCPKG_TARGET_IS_WINDOWS AND (VCPKG_TARGET_ARCHITECTURE STREQUAL "arm" OR VCPK
 endif()
 # setting CMAKE_CXX_STANDARD here to prevent llfio from messing with compiler flags
 # the cmake package config requires said C++ standard target transitively via quickcpplib
-if ("cxx20" IN_LIST FEATURES)
-    list(APPEND extra_config -DCMAKE_CXX_STANDARD=20)
-elseif("cxx17" IN_LIST FEATURES)
+if ("polyfill-cxx20" IN_LIST FEATURES)
     list(APPEND extra_config -DCMAKE_CXX_STANDARD=17)
+endif()
+if (VCPKG_CROSSCOMPILING)
+    # try_run() is not supported when cross-compiling
+    list(APPEND extra_config -DCXX_HAS_CXX17_FILESYSTEM=ON)
 endif()
 
 # quickcpplib parses CMAKE_MSVC_RUNTIME_LIBRARY and cannot support the default crt linkage generator expression from vcpkg
@@ -59,12 +70,10 @@ vcpkg_cmake_configure(
         -Dllfio_IS_DEPENDENCY=On
         "-DCMAKE_PREFIX_PATH=${CURRENT_INSTALLED_DIR}"
         ${LLFIO_FEATURE_OPTIONS}
-        -DLLFIO_FORCE_OPENSSL_OFF=ON
         -DLLFIO_ENABLE_DEPENDENCY_SMOKE_TEST=ON  # Leave this always on to test everything compiles
         -DCMAKE_DISABLE_FIND_PACKAGE_Git=ON
         -DCXX_CONCEPTS_FLAGS=
         -DCXX_COROUTINES_FLAGS=
-        -DCMAKE_POLICY_DEFAULT_CMP0091=NEW # MSVC <filesystem> detection fails without this
         ${extra_config}
 )
 
