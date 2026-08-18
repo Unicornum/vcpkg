@@ -1,7 +1,7 @@
 @echo off
 
 rem [20.12.2024] Библиотеки корректно собираются для Vs2022 и Android NDK:
-set EXPECTED_ANDROID_NDK=android-ndk-r26d
+set EXPECTED_ANDROID_NDK=android-ndk-r27c
 set ManifestRoot=--x-manifest-root=externals
 
 cd %~dp0\..
