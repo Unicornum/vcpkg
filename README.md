@@ -20,15 +20,14 @@
 **ANDROID_NDK_HOME** установить путь к папке нужной версии
 [Android NDK](https://developer.android.com/ndk).
 
+> Для внесения изменений из исходного репозитория синхронизировать ветку
+> **master**, добавить последний тег, слить ветку **externals** с этим тегом,
+> после чего влить **externals** в ветки конкретных проектов.
+
 ### Ветка externals.alicorn
 
 Ответвление ветки **externals**, содержит набор библиотек для проекта
 [Alicorn](https://github.com/Unicornum/Alicorn).
-
-### Ветка externals.covellitepp
-
-Ответвление ветки **externals**, содержит набор библиотек для проекта
-[Covellite++](https://github.com/Unicornum/Covellitepp).
 
 ### Автоматическая сборка библиотек при сборке проектов решения
 
