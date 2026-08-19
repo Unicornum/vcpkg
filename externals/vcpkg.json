@@ -1,6 +1,36 @@
 {
   "$schema": "https://raw.githubusercontent.com/microsoft/vcpkg-tool/main/docs/vcpkg.schema.json",
   "dependencies": [
-    "freeglut"
+    "assimp",
+    "boost-filesystem",
+    "boost-signals2",
+    "boost-program-options",
+    "boost-locale",
+    "boost-format",
+    "boost-dll",
+    "boost-serialization",
+    "boost-algorithm",
+    "cryptopp",
+    "date",
+    "fmt",
+    "freeimage",
+    "glm",
+    "gsl",
+    "gtest-noml",
+    "miniaudio",
+    "rapidxml",
+    "rmlui",
+    "robin-hood-hashing",
+    "snappy",
+    "tinyobjloader",
+    "utfcpp",
+    {
+      "name": "poco",
+      "platform": "windows"
+    },
+    {
+      "name": "wxwidgets",
+      "platform": "windows"
+    }
   ]
 }
