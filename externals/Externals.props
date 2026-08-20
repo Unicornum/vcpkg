@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ImportGroup Label="PropertySheets">
+    <Import Project="Externals.Android.props" Condition="'$(IsAndroid)' == 'Yes'" />
+    <Import Project="Alicorn\Alicorn.props" Condition="Exists('Alicorn\Alicorn.props')" />
+    <Import Project="Covellite\Covellite.props" Condition="Exists('Covellite\Covellite.props')" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros">
+    <ExternalsVcpkgDirectory>$(MSBuildThisFileDirectory)</ExternalsVcpkgDirectory>
+    <IsAndroid>$([System.String]::new($(ApplicationType).Fake).Replace('Android.Fake', 'Yes').Replace($(ApplicationType).Fake, 'No'))</IsAndroid>
+    <ProjectTypeSelector>$([System.String]::new($(IsAndroid)).Replace('No', 'Windows').Replace('Yes', 'Android'))</ProjectTypeSelector>
+    <EndPathToLibs>$([System.String]::new($(Configuration)\lib).Replace('Release\', ''))</EndPathToLibs>
+    <AllWindowsLibs>$(ExternalsVcpkgDirectory)Externals\$(ProjectTypeSelector)\$(EndPathToLibs)\*.lib</AllWindowsLibs>
+    <AutoLinkLibs>$([System.String]::new($(IsAndroid)).Replace('No', $(AllWindowsLibs)).Replace('Yes', ''))</AutoLinkLibs>
+  </PropertyGroup>
+  <PropertyGroup />
+  <ItemDefinitionGroup>
+    <Link />
+    <Link>
+      <AdditionalLibraryDirectories>$(ExternalsVcpkgDirectory)Externals\$(ProjectTypeSelector)\$(EndPathToLibs);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>$(AutoLinkLibs);%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+    <ClCompile>
+      <AdditionalIncludeDirectories>$(ExternalsVcpkgDirectory)Externals\$(ProjectTypeSelector)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>POCO_STATIC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <PreBuildEvent />
+    <PostBuildEvent />
+    <PreBuildEvent>
+      <Command>if not exist $(ExternalsVcpkgDirectory)Externals\Success.build (
+  echo error : External libraries not found, please run $(ExternalsVcpkgDirectory)Build.cmd first.
+  exit 1
+)
+
+%(Command)</Command>
+    </PreBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <BuildMacro Include="ExternalsVcpkgDirectory">
+      <Value>$(ExternalsVcpkgDirectory)</Value>
+    </BuildMacro>
+    <BuildMacro Include="IsAndroid">
+      <Value>$(IsAndroid)</Value>
+    </BuildMacro>
+    <BuildMacro Include="ProjectTypeSelector">
+      <Value>$(ProjectTypeSelector)</Value>
+    </BuildMacro>
+    <BuildMacro Include="EndPathToLibs">
+      <Value>$(EndPathToLibs)</Value>
+    </BuildMacro>
+    <BuildMacro Include="AllWindowsLibs">
+      <Value>$(AllWindowsLibs)</Value>
+    </BuildMacro>
+    <BuildMacro Include="AutoLinkLibs">
+      <Value>$(AutoLinkLibs)</Value>
+    </BuildMacro>
+  </ItemGroup>
+</Project>
