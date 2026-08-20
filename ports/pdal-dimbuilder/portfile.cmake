@@ -9,7 +9,7 @@ vcpkg_from_github(
     #[[
         Attention: pdal must be updated together with pdal-dimbuilder
     #]]
-    SHA512 1f9c4383fdbd4e10ef0b30b7148386692f8bd5f19b57a0323d92f2dc55a14fbc6a0d4d60c16c9604cbd3837c0ae8e3c88baebdefd534273952f92f01c5703554
+    SHA512 051e0a8ee2f03ad6eaf55b5843a41626ebc6d2517cf9eeedffda52878fbb9b7d854ea24174e2b3434f69ef41ab244e20e250f6c2c1083325b496489526fb8fea
     HEAD_REF master
     PATCHES
         namespace-nl.diff
@@ -26,7 +26,7 @@ vcpkg_cmake_build()
 
 vcpkg_copy_tools(TOOL_NAMES dimbuilder
     SEARCH_DIR "${CURRENT_BUILDTREES_DIR}/${TARGET_TRIPLET}-rel"
-    DESTINATION "${CURRENT_PACKAGES_DIR}/manual-tools/${PORT}"
+    DESTINATION "${CURRENT_PACKAGES_DIR}/manual-tools/${PORT}/${VERSION}"
 )
 
 vcpkg_install_copyright(FILE_LIST "${SOURCE_PATH}/LICENSE.txt")
