@@ -326,3 +326,9 @@ prefab/
 pythonenv3.8/
 .venv/
 
+# External.Vcpkg
+arm64-android
+x64-windows
+externals/Android
+externals/Windows
+externals/Success.build
