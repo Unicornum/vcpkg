@@ -8,24 +8,24 @@
     <IsAndroid>$([System.String]::new($(ApplicationType).Fake).Replace('Android.Fake', 'Yes').Replace($(ApplicationType).Fake, 'No'))</IsAndroid>
     <ProjectTypeSelector>$([System.String]::new($(IsAndroid)).Replace('No', 'Windows').Replace('Yes', 'Android'))</ProjectTypeSelector>
     <EndPathToLibs>$([System.String]::new($(Configuration)\lib).Replace('Release\', ''))</EndPathToLibs>
-    <AllWindowsLibs>$(ExternalsVcpkgDirectory)Externals\$(ProjectTypeSelector)\$(EndPathToLibs)\*.lib</AllWindowsLibs>
+    <AllWindowsLibs>$(ExternalsVcpkgDirectory)$(ProjectTypeSelector)\$(EndPathToLibs)\*.lib</AllWindowsLibs>
     <AutoLinkLibs>$([System.String]::new($(IsAndroid)).Replace('No', $(AllWindowsLibs)).Replace('Yes', ''))</AutoLinkLibs>
   </PropertyGroup>
   <PropertyGroup />
   <ItemDefinitionGroup>
     <Link />
     <Link>
-      <AdditionalLibraryDirectories>$(ExternalsVcpkgDirectory)Externals\$(ProjectTypeSelector)\$(EndPathToLibs);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(ExternalsVcpkgDirectory)$(ProjectTypeSelector)\$(EndPathToLibs);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>$(AutoLinkLibs);%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <ClCompile>
-      <AdditionalIncludeDirectories>$(ExternalsVcpkgDirectory)Externals\$(ProjectTypeSelector)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ExternalsVcpkgDirectory)$(ProjectTypeSelector)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>POCO_STATIC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <PreBuildEvent />
     <PostBuildEvent />
     <PreBuildEvent>
-      <Command>if not exist $(ExternalsVcpkgDirectory)Externals\Success.build (
+      <Command>if not exist $(ExternalsVcpkgDirectory)Success.build (
   echo error : External libraries not found, please run $(ExternalsVcpkgDirectory)Build.cmd first.
   exit 1
 )
