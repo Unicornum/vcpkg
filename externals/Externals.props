@@ -2,8 +2,6 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ImportGroup Label="PropertySheets">
     <Import Project="Externals.Android.props" Condition="'$(IsAndroid)' == 'Yes'" />
-    <Import Project="Alicorn\Alicorn.props" Condition="Exists('Alicorn\Alicorn.props')" />
-    <Import Project="Covellite\Covellite.props" Condition="Exists('Covellite\Covellite.props')" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros">
     <ExternalsVcpkgDirectory>$(MSBuildThisFileDirectory)</ExternalsVcpkgDirectory>
